@@ -4,13 +4,14 @@ const fs = require('node:fs');
 const net = require('node:net');
 const path = require('node:path');
 const { EventEmitter } = require('node:events');
+const { ROOT } = require('./paths');
 
 const PREFERRED_PORT = 5678;
 
 function runtimeDir(app) {
   return app.isPackaged
     ? path.join(process.resourcesPath, 'runtime')
-    : path.join(__dirname, '..', 'runtime', process.arch);
+    : path.join(ROOT, 'runtime', process.arch);
 }
 
 function isPortFree(port) {

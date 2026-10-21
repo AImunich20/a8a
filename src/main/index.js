@@ -1,13 +1,14 @@
-const { app, BrowserWindow, Menu, dialog, shell, nativeTheme } = require('electron');
+const { app, BrowserWindow, dialog, shell, nativeTheme } = require('electron');
 const fs = require('node:fs');
 const path = require('node:path');
 const { Engine } = require('./engine');
 const { Updater } = require('./updater');
+const { buildMenu } = require('./menu');
+const { RENDERER, LOGO_SVG } = require('./paths');
 
 app.setName('a8a');
 if (!app.requestSingleInstanceLock()) app.quit();
 
-const UI = path.join(__dirname, 'ui');
 const engine = new Engine(app);
 const updater = new Updater({ beforeInstall: () => engine.stop() });
 let splash = null;
@@ -15,9 +16,9 @@ let mainWindow = null;
 let quitting = false;
 
 const logoUri = `url("data:image/svg+xml;base64,${fs
-  .readFileSync(path.join(__dirname, '..', 'assets', 'logo.svg'))
+  .readFileSync(LOGO_SVG)
   .toString('base64')}")`;
-const themeCss = `:root { --a8a-logo: ${logoUri}; }\n${fs.readFileSync(path.join(UI, 'theme.css'), 'utf8')}`;
+const themeCss = `:root { --a8a-logo: ${logoUri}; }\n${fs.readFileSync(path.join(RENDERER, 'theme.css'), 'utf8')}`;
 
 function brandTitle(title) {
   return title.replace(/\bn8n\b/g, 'a8a') || 'a8a';
@@ -45,7 +46,7 @@ function createSplash() {
     width: 380, height: 300, frame: false, resizable: false, transparent: true,
     show: false, center: true, skipTaskbar: true,
   });
-  splash.loadFile(path.join(UI, 'splash.html'));
+  splash.loadFile(path.join(RENDERER, 'splash.html'));
   splash.once('ready-to-show', () => splash.show());
   splash.on('closed', () => (splash = null));
 }
@@ -141,69 +142,6 @@ engine.on('crash', async ({ code, wasReady }) => {
   }
 });
 
-function buildMenu() {
-  const template = [
-    {
-      label: 'a8a',
-      submenu: [
-        { label: 'About a8a', click: showAbout },
-        { label: 'Check for Updates…', click: () => updater.check({ silent: false }) },
-        { type: 'separator' },
-        { role: 'services' },
-        { type: 'separator' },
-        { role: 'hide' }, { role: 'hideOthers' }, { role: 'unhide' },
-        { type: 'separator' },
-        { role: 'quit' },
-      ],
-    },
-    { role: 'editMenu' },
-    {
-      label: 'View',
-      submenu: [
-        { label: 'Home', accelerator: 'CmdOrCtrl+Shift+H', click: () => mainWindow?.loadURL(engine.url) },
-        { role: 'reload' }, { role: 'forceReload' },
-        { type: 'separator' },
-        { role: 'resetZoom' }, { role: 'zoomIn' }, { role: 'zoomOut' },
-        { type: 'separator' },
-        { role: 'togglefullscreen' },
-        { role: 'toggleDevTools' },
-      ],
-    },
-    {
-      role: 'windowMenu',
-      submenu: [
-        { label: 'Show a8a', accelerator: 'CmdOrCtrl+0', click: showMain },
-        { role: 'minimize' }, { role: 'zoom' }, { role: 'close' },
-      ],
-    },
-    {
-      role: 'help',
-      submenu: [
-        { label: 'Open in Browser', click: () => shell.openExternal(engine.url) },
-        { label: 'Open Data Folder', click: () => shell.openPath(app.getPath('userData')) },
-        { label: 'Show Engine Log', click: () => shell.showItemInFolder(engine.logFile) },
-        { type: 'separator' },
-        { label: 'Workflow Documentation', click: () => shell.openExternal('https://docs.n8n.io') },
-        { label: 'a8a on GitHub', click: () => shell.openExternal(`https://github.com/${require('../package.json').a8a.updateRepo}`) },
-      ],
-    },
-  ];
-  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
-}
-
-function showAbout() {
-  dialog.showMessageBox({
-    type: 'info',
-    icon: path.join(UI, 'logo.png'),
-    message: `a8a ${app.getVersion()}`,
-    detail:
-      `Workflow engine: n8n ${engine.version}\n` +
-      `Engine URL: ${engine.url}\n` +
-      `Data: ${app.getPath('userData')}\n\n` +
-      'Powered by n8n (https://n8n.io), used under the n8n Sustainable Use License.',
-  });
-}
-
 for (const sig of ['SIGTERM', 'SIGINT', 'SIGHUP']) process.on(sig, () => app.quit());
 
 app.on('second-instance', showMain);
@@ -217,7 +155,7 @@ app.on('before-quit', (e) => {
 });
 
 app.whenReady().then(() => {
-  buildMenu();
+  buildMenu({ engine, updater, showMain, getMainWindow: () => mainWindow });
   startEngine();
   if (app.isPackaged) updater.start();
 });

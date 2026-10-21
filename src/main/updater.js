@@ -9,7 +9,7 @@ const { pipeline } = require('node:stream/promises');
 const { Readable, Transform } = require('node:stream');
 
 const run = promisify(execFile);
-const REPO = require('../package.json').a8a.updateRepo;
+const REPO = require('./paths').pkg.a8a.updateRepo;
 const CHECK_INTERVAL = 6 * 60 * 60 * 1000;
 
 function compareVersions(a, b) {
