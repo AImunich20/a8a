@@ -1,0 +1,37 @@
+/* a8a mint theme — remaps the n8n brand scale (named "orange" upstream) to mint. */
+:root, :root[data-theme], body {
+  --color--orange-50: oklch(98.2% .018 170) !important;
+  --color--orange-100: oklch(95.6% .042 170) !important;
+  --color--orange-150: oklch(93.5% .06 170) !important;
+  --color--orange-200: oklch(90.5% .085 169) !important;
+  --color--orange-250: oklch(87.5% .105 169) !important;
+  --color--orange-300: oklch(83.5% .125 168) !important;
+  --color--orange-400: oklch(77% .14 167) !important;
+  --color--orange-500: oklch(69% .145 166) !important;
+  --color--orange-600: oklch(62% .135 167) !important;
+  --color--orange-700: oklch(54% .118 168) !important;
+  --color--orange-800: oklch(46% .098 170) !important;
+  --color--orange-900: oklch(39.5% .08 171) !important;
+  --color--orange-950: oklch(27% .052 172) !important;
+  --color--primary--h: 162 !important;
+  --color--primary--s: 62% !important;
+  --color--primary--l: 46% !important;
+  --chat--color--primary: #1fb386 !important;
+  --chat--color--primary-shade-50: #19a47a !important;
+  --chat--color--primary--shade-100: #15946e !important;
+}
+
+/* Logo: hide the upstream marks and draw the a8a mark + wordmark instead. */
+[data-test-id="n8n-logo"] { display: flex; align-items: center; gap: 8px; }
+[data-test-id="n8n-logo"] > svg { display: none !important; }
+[data-test-id="n8n-logo"]::before {
+  content: ""; order: -2; flex: none; width: 26px; height: 26px;
+  background: var(--a8a-logo) center / contain no-repeat;
+}
+[data-test-id="n8n-logo"]::after {
+  content: "a8a"; order: -1; font: 700 19px/1 -apple-system, "SF Pro Rounded", "Helvetica Neue", sans-serif;
+  letter-spacing: -.02em; color: var(--color--text--shade-1, #1f2b27);
+}
+[data-test-id="n8n-logo"][class*="sidebarCollapsed"]::after { display: none; }
+[data-test-id="n8n-logo"][class*="large"]::before { width: 44px; height: 44px; }
+[data-test-id="n8n-logo"][class*="large"]::after { font-size: 30px; }

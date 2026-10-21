@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>a8a</title>
+<style>
+  :root { --mint: #2bbf90; --deep: #0b6e53; }
+  html, body { margin: 0; height: 100%; -webkit-user-select: none; -webkit-app-region: drag; }
+  body {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+    font: 13px -apple-system, "Helvetica Neue", sans-serif; color: var(--deep);
+    background: radial-gradient(circle at 30% 10%, #f4fffb, #d3f7ea 70%);
+    border-radius: 14px; overflow: hidden;
+  }
+  img { width: 112px; height: 112px; animation: float 2.4s ease-in-out infinite; }
+  h1 { margin: 0; font-size: 26px; letter-spacing: -.02em; }
+  #status { height: 16px; max-width: 320px; opacity: .75; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar { width: 180px; height: 4px; border-radius: 2px; background: #bdeedd; overflow: hidden; }
+  .bar::after { content: ""; display: block; width: 40%; height: 100%; border-radius: 2px; background: var(--mint); animation: slide 1.2s ease-in-out infinite; }
+  @keyframes slide { from { transform: translateX(-100%); } to { transform: translateX(250%); } }
+  @keyframes float { 50% { transform: translateY(-5px); } }
+  @media (prefers-color-scheme: dark) {
+    body { background: radial-gradient(circle at 30% 10%, #183a30, #0d1f1a 70%); color: #b9f3de; }
+    .bar { background: #1f4a3d; }
+  }
+</style>
+</head>
+<body>
+  <img src="logo.png" alt="">
+  <h1>a8a</h1>
+  <div class="bar"></div>
+  <div id="status">Starting workflow engine…</div>
+  <script>function setStatus(s) { document.getElementById('status').textContent = s; }</script>
+</body>
+</html>

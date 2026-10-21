@@ -1,0 +1,89 @@
+{
+  "name": "a8a",
+  "productName": "a8a",
+  "version": "1.0.0",
+  "description": "a8a — workflow automation desktop app powered by the n8n engine",
+  "main": "src/main.js",
+  "author": "AI_intelligence_genZ",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "private": true,
+  "repository": "github:AImunich20/a8a",
+  "a8a": {
+    "nodeVersion": "v24.22.0",
+    "n8nVersion": "2.44.5",
+    "updateRepo": "AImunich20/a8a"
+  },
+  "scripts": {
+    "runtime": "node scripts/fetch-runtime.mjs",
+    "icons": "node scripts/make-icons.mjs",
+    "start": "electron .",
+    "dist": "npm run icons && npm run runtime -- arm64 && electron-builder --mac --arm64",
+    "dist:x64": "npm run icons && npm run runtime -- x64 && electron-builder --mac --x64 -c.extraResources.0.from=runtime/x64",
+    "release": "bash scripts/release.sh"
+  },
+  "devDependencies": {
+    "electron": "^45.0.0",
+    "electron-builder": "^26.15.3",
+    "sharp": "^0.35.5"
+  },
+  "build": {
+    "appId": "com.aimunich20.a8a",
+    "productName": "a8a",
+    "copyright": "© 2026 AI_intelligence_genZ",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "src/**/*",
+      "assets/logo.svg",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "runtime/arm64",
+        "to": "runtime",
+        "filter": [
+          "**/*",
+          "!.stamp"
+        ]
+      }
+    ],
+    "asar": true,
+    "artifactName": "${productName}-${version}-${arch}-mac.${ext}",
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "icon": "build/icon.icns",
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "identity": "-",
+      "hardenedRuntime": false,
+      "gatekeeperAssess": false,
+      "darkModeSupport": true
+    },
+    "dmg": {
+      "title": "a8a ${version}",
+      "background": "build/background.png",
+      "iconSize": 96,
+      "window": {
+        "width": 540,
+        "height": 380
+      },
+      "contents": [
+        {
+          "x": 150,
+          "y": 180
+        },
+        {
+          "x": 390,
+          "y": 180,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "publish": null
+  }
+}
